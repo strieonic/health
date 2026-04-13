@@ -11,6 +11,7 @@ import authRoutes from "./routes/authRoutes.js";
 import adminRoutes from "./routes/adminRoutes.js";
 import hospitalRoutes from "./routes/hospitalRoute.js";
 import patientRoutes from "./routes/patientRoutes.js";
+import publicRoutes from "./routes/publicRoutes.js";
 dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
@@ -54,6 +55,7 @@ app.use("/api/consent", consentRoutes);
 app.use("/api/records", recordRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/public", publicRoutes);
 const PORT = process.env.PORT || 8000;
 
 const startServer = async () => {
