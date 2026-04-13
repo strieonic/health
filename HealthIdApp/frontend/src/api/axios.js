@@ -7,7 +7,12 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const isPublicRoute = config.url.startsWith('/public');
+    if (isPublicRoute) return config;
+
+    const isAdminRoute = config.url.startsWith('/admin');
+    const token = isAdminRoute ? localStorage.getItem('adminToken') : localStorage.getItem('token');
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
