@@ -61,6 +61,14 @@ const PatientRegister = () => {
           </div>
 
           <div className="input-group">
+            <label style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Email Address (Optional)</label>
+            <div style={{ position: 'relative', marginTop: '0.5rem' }}>
+              <FaUser style={{ position: 'absolute', top: '14px', left: '16px', color: 'var(--text-secondary)' }} />
+              <input type="email" name="email" className="glass-input" style={{ paddingLeft: '45px' }} placeholder="your@email.com" onChange={handleChange} />
+            </div>
+          </div>
+
+          <div className="input-group">
             <label style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Aadhaar Number (Optional)</label>
             <div style={{ position: 'relative', marginTop: '0.5rem' }}>
               <FaIdCard style={{ position: 'absolute', top: '14px', left: '16px', color: 'var(--text-secondary)' }} />

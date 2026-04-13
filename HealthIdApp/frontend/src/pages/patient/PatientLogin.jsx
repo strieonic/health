@@ -60,14 +60,14 @@ const PatientLogin = () => {
         {step === 1 ? (
           <form onSubmit={handleSendOTP} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             <div className="input-group">
-              <label style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Registered Phone</label>
+              <label style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Email or Phone Number</label>
               <div style={{ position: 'relative', marginTop: '0.5rem' }}>
                 <FaPhoneAlt style={{ position: 'absolute', top: '14px', left: '16px', color: 'var(--text-secondary)' }} />
                 <input 
-                  type="tel" 
+                  type="text" 
                   className="glass-input" 
                   style={{ paddingLeft: '45px' }} 
-                  placeholder="Enter your phone number" 
+                  placeholder="Enter your email or phone" 
                   required 
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)} 
