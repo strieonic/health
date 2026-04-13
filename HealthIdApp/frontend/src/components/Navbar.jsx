@@ -93,6 +93,7 @@ const Navbar = () => {
               <>
                 <Link to="/patient/login" className="nav-link">Login</Link>
                 <Link to="/hospital/login" className="nav-link">Hospital Portal</Link>
+                <Link to="/admin/login" className="nav-link">Admin Portal</Link>
                 <Link to="/patient/register" className="nav-cta">
                   Get Started
                   <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ marginLeft: '4px' }}>
