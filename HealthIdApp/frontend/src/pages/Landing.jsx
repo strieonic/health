@@ -55,14 +55,32 @@ const faqData = [
   },
 ];
 
-/* ─── Testimonial Data ─── */
-const testimonials = [
-  { text: "Finally, I don't need to carry a folder full of old reports. My new doctor pulled up everything in seconds.", name: 'Priya S.', role: 'Patient, Mumbai', color: '#FF3366' },
-  { text: "The consent system is brilliant. I feel genuinely in control of who sees my family's medical data.", name: 'Rahul M.', role: 'Patient, Delhi', color: '#00D4AA' },
-  { text: "As a hospital, onboarding was seamless. The verification process builds trust with our patients.", name: 'Dr. Anjali K.', role: 'Apollo Hospitals', color: '#FFB347' },
-  { text: "We reduced patient intake time by 40%. Records transfer instantly when consent is granted.", name: 'Dr. Vikram P.', role: 'Max Healthcare', color: '#8B5CF6' },
-  { text: "My grandmother's entire medical history across 3 cities — now in one place. This should have existed years ago.", name: 'Sneha T.', role: 'Patient, Pune', color: '#FF3366' },
-  { text: "The OTP system is simple enough that even my parents use it without any confusion.", name: 'Arjun D.', role: 'Patient, Bangalore', color: '#00D4AA' },
+/* ─── Platform Capability Pillars ─── */
+const platformPillars = [
+  { 
+    title: 'Unified Health History', 
+    desc: 'Every prescription, lab report, and discharge summary synced across India in one secure vault.', 
+    icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z',
+    tag: 'Infrastructure'
+  },
+  { 
+    title: 'Smart Consent DNA', 
+    desc: 'Granular, time-bound control over who can see your data. Revoke access instantly with one tap.', 
+    icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z',
+    tag: 'Privacy'
+  },
+  { 
+    title: 'HL7 FHIR Interoperability', 
+    desc: 'Universal medical data standards ensure your records are readable by any certified hospital system.', 
+    icon: 'M4 7v10c0 2.21 4.477 4 10 4s10-1.79 10-4V7M4 7c0 2.21 4.477 4 10 4s10-1.79 10-4M4 7c0-2.21 4.477-4 10-4s10 1.79 10 4m0 5c0 2.21-4.477 4-10 4S4 14.21 4 12',
+    tag: 'Standardized'
+  },
+  { 
+    title: 'ABDM Core Protocol', 
+    desc: 'Built natively on the Ayushman Bharat Digital Mission framework for national healthcare scale.', 
+    icon: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4',
+    tag: 'Government'
+  },
 ];
 
 /* ─── FAQ Item Component ─── */
@@ -445,50 +463,46 @@ const Landing = () => {
       </section>
 
       {/* ════════════════════════════════════
-          STATS / TRUST SECTION
+          TRUST & STANDARDS — Meaningful Info
       ════════════════════════════════════ */}
-      <section className="stats-section">
-        <div className="stats-inner">
+      <section className="trust-section">
+        <div className="trust-inner">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="section-label" style={{ textAlign: 'center' }}>Impact</div>
+            <div className="section-label" style={{ textAlign: 'center' }}>Trust Architecture</div>
             <h2 className="section-title" style={{ textAlign: 'center', margin: '0 auto' }}>
-              Numbers that matter
+              Built for national scale & security
             </h2>
           </motion.div>
 
-          <div className="stats-grid">
-            <motion.div className="stat-item" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}>
-              <div className="stat-number">
-                <AnimatedCounter end={stats.patients} suffix="+" useIndianFormat />
-              </div>
-              <div className="stat-label">Health IDs Created</div>
-            </motion.div>
-
-            <motion.div className="stat-item" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.2, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}>
-              <div className="stat-number">
-                <AnimatedCounter end={stats.hospitals} suffix="+" />
-              </div>
-              <div className="stat-label">Verified Hospitals</div>
-            </motion.div>
-
-            <motion.div className="stat-item" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.3, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}>
-              <div className="stat-number">
-                <AnimatedCounter end={stats.statesCovered} suffix="" />
-              </div>
-              <div className="stat-label">States Covered</div>
-            </motion.div>
-
-            <motion.div className="stat-item" initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.4, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}>
-              <div className="stat-number">
-                <AnimatedCounter end={stats.uptime} suffix="%" decimals={1} />
-              </div>
-              <div className="stat-label">Uptime Reliability</div>
-            </motion.div>
+          <div className="trust-grid">
+            {[
+              { title: 'ABDM Compliant', desc: 'Officially aligned with India\'s Ayushman Bharat Digital Mission framework.', icon: 'M5 13l4 4L19 7' },
+              { title: 'AES-256 Encryption', desc: 'Military-grade encryption for medical data both at rest and in transit.', icon: 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z' },
+              { title: 'Zero-Knowledge', desc: 'We never see your medical records. Data only decrypts for your chosen doctor.', icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z' },
+              { title: 'High Availability', desc: 'Redundant server architecture ensures 24/7 access to critical medical history.', icon: 'M13 10V3L4 14h7v7l9-11h-7z' }
+            ].map((pillar, i) => (
+              <motion.div 
+                key={i} 
+                className="trust-item" 
+                initial={{ opacity: 0, y: 20 }} 
+                whileInView={{ opacity: 1, y: 0 }} 
+                viewport={{ once: true }} 
+                transition={{ delay: i * 0.1, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <div className="trust-icon">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d={pillar.icon} />
+                  </svg>
+                </div>
+                <h3 className="trust-pillar-title">{pillar.title}</h3>
+                <p className="trust-pillar-desc">{pillar.desc}</p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
@@ -533,35 +547,35 @@ const Landing = () => {
       </section>
 
       {/* ════════════════════════════════════
-          TESTIMONIALS — Auto-scroll Marquee
+          PLATFORM PILLARS — Info Marquee
       ════════════════════════════════════ */}
-      <section className="testimonials-section">
+      <section className="info-pillars-section">
         <motion.div
-          className="testimonials-header"
+          className="info-pillars-header"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div className="section-label">Voices</div>
+          <div className="section-label">Capabilities</div>
           <h2 className="section-title">
-            Trusted by patients & hospitals
+            The architecture of digital health
           </h2>
         </motion.div>
 
-        <div className="testimonials-track" aria-label="Testimonials">
+        <div className="info-pillars-track" aria-label="Platform Pillars">
           {/* Duplicate for infinite scroll */}
-          {[...testimonials, ...testimonials].map((t, i) => (
-            <div key={i} className="testimonial-card">
-              <p className="testimonial-text">"{t.text}"</p>
-              <div className="testimonial-author">
-                <div className="testimonial-avatar" style={{ background: `${t.color}20`, color: t.color }}>
-                  {t.name.charAt(0)}
-                </div>
-                <div>
-                  <div className="testimonial-name">{t.name}</div>
-                  <div className="testimonial-role">{t.role}</div>
-                </div>
+          {[...platformPillars, ...platformPillars].map((pillar, i) => (
+            <div key={i} className="info-pillar-card">
+              <div className="info-pillar-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d={pillar.icon} />
+                </svg>
+              </div>
+              <div className="info-pillar-content">
+                <div className="info-pillar-tag">{pillar.tag}</div>
+                <h3 className="info-pillar-title">{pillar.title}</h3>
+                <p className="info-pillar-desc">{pillar.desc}</p>
               </div>
             </div>
           ))}

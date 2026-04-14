@@ -443,84 +443,140 @@
   line-height: 1.6;
 }
 
-/* ── Testimonials ── */
-.testimonials-section {
-  padding: var(--space-5xl) 0;
+/* ── Platform Info Pillars ── */
+.info-pillars-section {
+  padding: var(--space-6xl) 0;
   overflow: hidden;
+  position: relative;
 }
 
-.testimonials-header {
+.info-pillars-header {
   max-width: 1280px;
   margin: 0 auto;
   padding: 0 var(--space-xl);
-  margin-bottom: var(--space-3xl);
+  margin-bottom: var(--space-4xl);
 }
 
-.testimonials-track {
+.info-pillars-track {
   display: flex;
-  gap: var(--space-lg);
+  gap: var(--space-2xl);
   width: max-content;
-  animation: marquee 45s linear infinite;
+  animation: marquee-info 80s linear infinite;
+  padding: 20px 0;
 }
 
-.testimonials-track:hover {
+.info-pillars-track:hover {
   animation-play-state: paused;
 }
 
-@keyframes marquee {
+@keyframes marquee-info {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
 
-.testimonial-card {
-  width: 380px;
+.info-pillar-card {
+  width: 420px;
   flex-shrink: 0;
+  display: flex;
+  gap: var(--space-lg);
   padding: var(--space-xl);
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
-  transition: border-color 0.3s ease;
+  backdrop-filter: blur(10px);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.testimonial-card:hover {
-  border-color: var(--border-light);
+.info-pillar-card:hover {
+  border-color: var(--accent-primary-soft);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px -10px rgba(0,0,0,0.4);
 }
 
-.testimonial-text {
-  font-size: var(--text-base);
-  color: var(--text-secondary);
-  line-height: 1.7;
-  margin-bottom: var(--space-lg);
-  font-style: italic;
-}
-
-.testimonial-author {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-}
-
-.testimonial-avatar {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+.info-pillar-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.03);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: white;
+  flex-shrink: 0;
+  color: var(--accent-primary);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.testimonial-name {
+.info-pillar-tag {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent-primary);
+  margin-bottom: 6px;
+  opacity: 0.8;
+}
+
+.info-pillar-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.info-pillar-desc {
   font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* ── Trust & Security Section ── */
+.trust-section {
+  padding: var(--space-6xl) var(--space-xl);
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  position: relative;
+}
+
+.trust-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.trust-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-2xl);
+  margin-top: var(--space-4xl);
+}
+
+.trust-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.trust-icon {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-secondary);
+}
+
+.trust-pillar-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: var(--text-md);
   font-weight: 600;
   color: var(--text-primary);
 }
 
-.testimonial-role {
-  font-size: var(--text-xs);
+.trust-pillar-desc {
+  font-size: var(--text-sm);
   color: var(--text-tertiary);
+  line-height: 1.6;
 }
 
 /* ── FAQ ── */
