@@ -37,12 +37,14 @@ const connectDB = async () => {
     mongoServer = await MongoMemoryServer.create();
     const uri = mongoServer.getUri();
     await mongoose.connect(uri);
-    console.log("✅ Connected to in-memory MongoDB (dev mode)");
-    console.log("⚠️ Data will be lost on server restart!");
+    console.log("✅ Connected to in-memory MongoDB (dev fallback)");
+    console.warn("❗ WARNING: Using in-memory DB. Data will be lost on server restart!");
   } catch (error) {
     console.error("❌ Critical MongoDB error:", error.message);
-    // Don't throw here if we want the server to keep trying or start anyway
-    // throw error; 
+    if (process.env.NODE_ENV === "production") {
+      console.error("⛔ Production error: MongoDB connection failed. Terminating process.");
+      process.exit(1);
+    }
   }
 };
 

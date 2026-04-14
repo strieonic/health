@@ -21,6 +21,14 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
+// Trust Render/Vercel proxies for correct IP detection
+app.set("trust proxy", 1);
+
+// Health check endpoint for monitoring services
+app.get("/api/health", (req, res) => {
+  res.status(200).json({ status: "ok", timestamp: new Date(), env: process.env.NODE_ENV });
+});
+
 /* ======================================================
    CORS HARDENING (Must be first)
 ====================================================== */

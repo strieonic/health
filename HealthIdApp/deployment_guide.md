@@ -61,7 +61,15 @@ Once you have your Vercel URL (e.g., `https://health-id-app.vercel.app`):
 
 ---
 
-## 🔍 6. Post-Deployment Checklist
+## 🛠️ 6. New: Automated Configurations
+I have added the following files to simplify your deployment:
+- **`frontend/vercel.json`**: This ensures that if you refresh your browser on pages like `/my-records`, Vercel doesn't show a 404 error. It automatically redirects all traffic to the React index.
+- **`render.yaml`**: This is a "Blueprint" for Render. When you create a new Web Service, Render can read this file to automatically suggest the correct settings (Build Command, Start Command, etc.).
+- **`/api/health`**: You can use this URL for Render's "Health Check Path" to ensure your server is truly running before it switches traffic.
+
+---
+
+## 🔍 7. Post-Deployment Checklist
 - [ ] Test **Patient Registration** to ensure OTPs are sent via Resend.
 - [ ] Test **Record Upload** to ensure Cloudinary is storing files.
 - [ ] Log into the **Admin Dashboard** and verify you can view hospital licenses.
