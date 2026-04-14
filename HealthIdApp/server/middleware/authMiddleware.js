@@ -20,6 +20,10 @@ export const protectPatient = async (req, res, next) => {
     // Verify token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
+    if (decoded.role !== "patient") {
+      return res.status(403).json({ message: "Not authorized as a patient" });
+    }
+
     // Attach patient to request
     const patient = await Patient.findById(decoded.id).select("-password");
     if (!patient) {

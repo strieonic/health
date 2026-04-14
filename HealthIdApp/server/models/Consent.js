@@ -14,7 +14,10 @@ const consentSchema = new mongoose.Schema(
       required: true,
     },
 
-    otp: String,
+    hashedOtp: {
+      type: String,
+      required: true,
+    },
 
     status: {
       type: String,
@@ -22,7 +25,19 @@ const consentSchema = new mongoose.Schema(
       default: "pending",
     },
 
-    expiresAt: Date,
+    // When the OTP itself expires (e.g., 5 mins)
+    otpExpiresAt: {
+      type: Date,
+      required: true,
+    },
+
+    // How long the hospital has access (e.g., 24 hours from approval)
+    accessDuration: {
+      type: Number, // in hours
+      default: 24,
+    },
+
+    expiresAt: Date, // Calculated when approved
   },
   { timestamps: true },
 );

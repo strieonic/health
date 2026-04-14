@@ -1,7 +1,9 @@
+import crypto from "crypto";
 import Patient from "../models/Patient.js";
 import Hospital from "../models/Hospital.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { sendOTPEmail } from "../services/emailService.js";
 import generateHealthId from "../utils/generateHealthId.js";
 import generateQR from "../utils/qrGenerator.js";
 
@@ -10,12 +12,16 @@ import generateQR from "../utils/qrGenerator.js";
 ====================================================== */
 export const registerPatient = async (req, res) => {
   try {
-    const { name, phone, aadhaar } = req.body;
+    const { name, phone, email, aadhaar } = req.body;
 
-    // check existing patient using phone
-    const existingPatient = await Patient.findOne({ phone });
+    // check existing patient using phone or email
+    const existingPatient = await Patient.findOne({
+      $or: [{ phone }, { email }],
+    });
     if (existingPatient) {
-      return res.status(400).json({ message: "Patient already registered" });
+      return res
+        .status(400)
+        .json({ message: "Patient already registered with this phone/email" });
     }
 
     // generate HealthID
@@ -27,6 +33,7 @@ export const registerPatient = async (req, res) => {
     const patient = await Patient.create({
       name,
       phone,
+      email,
       aadhaar,
       healthId,
       qrCode,
@@ -43,29 +50,44 @@ export const registerPatient = async (req, res) => {
 };
 
 /* ======================================================
-   SEND OTP (mock — logs to console for dev)
+   SEND OTP (Real Email + Hashing)
 ====================================================== */
 export const sendPatientOTP = async (req, res) => {
   try {
-    const { phone } = req.body;
+    const { identifier, phone } = req.body;
+    const loginId = identifier || phone;
 
-    const patient = await Patient.findOne({ phone });
+    const patient = await Patient.findOne({
+      $or: [
+        { phone: loginId },
+        { email: loginId },
+        { healthId: loginId }
+      ]
+    });
     if (!patient) {
       return res.status(404).json({ message: "Patient not found" });
     }
 
-    // generate 6-digit OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    // generate 6-digit secure OTP
+    const otp = crypto.randomInt(100000, 999999).toString();
 
-    // store temporarily in DB
-    patient.loginOTP = otp;
-    patient.otpExpiry = Date.now() + 5 * 60 * 1000; // 5 mins
-    await patient.save();
+    // hash OTP for secure storage
+    const salt = await bcrypt.genSalt(10);
+    const hashedOTP = await bcrypt.hash(otp, salt);
 
-    // In development, log OTP. In production, integrate Twilio.
-    console.log(`\n📱 OTP for ${phone}: ${otp}\n`);
+    // store hashed OTP temporarily
+    // store hashed OTP temporarily, using findByIdAndUpdate bypasses full schema validation for legacy records missing newer required fields
+    await Patient.findByIdAndUpdate(patient._id, {
+      loginOTP: hashedOTP,
+      otpExpiry: Date.now() + 5 * 60 * 1000 // 5 mins
+    }, { runValidators: false });
 
-    res.status(200).json({ message: "OTP sent successfully", devOTP: otp });
+    // Send via professional email service
+    await sendOTPEmail(patient.email, otp, patient.name);
+
+    res.status(200).json({
+      message: "OTP sent to your registered email address",
+    });
   } catch (error) {
     console.error("OTP error:", error);
     res.status(500).json({ message: "OTP sending failed" });
@@ -77,14 +99,27 @@ export const sendPatientOTP = async (req, res) => {
 ====================================================== */
 export const verifyPatientOTP = async (req, res) => {
   try {
-    const { phone, otp } = req.body;
+    const { identifier, phone, otp } = req.body;
+    const loginId = identifier || phone;
 
-    const patient = await Patient.findOne({ phone });
+    const patient = await Patient.findOne({
+      $or: [
+        { phone: loginId },
+        { email: loginId },
+        { healthId: loginId }
+      ]
+    });
     if (!patient) {
       return res.status(404).json({ message: "Patient not found" });
     }
 
-    if (patient.loginOTP !== otp) {
+    if (!patient.loginOTP) {
+      return res.status(400).json({ message: "No OTP requested" });
+    }
+
+    // verify hashed OTP
+    const isMatch = await bcrypt.compare(otp, patient.loginOTP);
+    if (!isMatch) {
       return res.status(400).json({ message: "Invalid OTP" });
     }
 
@@ -101,7 +136,7 @@ export const verifyPatientOTP = async (req, res) => {
     const token = jwt.sign(
       { id: patient._id, role: "patient" },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" },
+      { expiresIn: "36500d" },
     );
 
     res.status(200).json({
@@ -137,8 +172,8 @@ export const registerHospital = async (req, res) => {
     // HASH PASSWORD
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // File path from local upload (if multer middleware ran)
-    const licencePdf = req.file ? `/uploads/${req.file.filename}` : null;
+    // Cloudinary stores the remote URL in req.file.path securely
+    const licencePdf = req.file ? req.file.path : null;
 
     const hospital = await Hospital.create({
       hospitalName,
@@ -192,7 +227,7 @@ export const loginHospital = async (req, res) => {
     const token = jwt.sign(
       { id: hospital._id, role: "hospital" },
       process.env.JWT_SECRET,
-      { expiresIn: "7d" },
+      { expiresIn: "36500d" },
     );
 
     res.status(200).json({

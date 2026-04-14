@@ -24,8 +24,20 @@ export const getHospitalProfile = async (req, res) => {
 export const searchPatientByHealthId = async (req, res) => {
   try {
     const { healthId } = req.body;
-
-    const patient = await Patient.findOne({ healthId }).select(
+    
+    // Normalize healthId (e.g., from MH-2-026--3210 to MH-2026-3210)
+    const clean = healthId.replace(/[-\s]/g, ""); 
+    let normalizedId = healthId.trim();
+    if (clean.length === 10 && clean.startsWith("MH")) {
+      normalizedId = `MH-${clean.substring(2, 6)}-${clean.substring(6)}`;
+    }
+    
+    const patient = await Patient.findOne({ 
+      $or: [
+        { healthId: healthId.trim() },
+        { healthId: normalizedId }
+      ]
+    }).select(
       "name healthId phone bloodGroup",
     );
 

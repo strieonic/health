@@ -5,6 +5,15 @@ import Consent from "../models/Consent.js";
 import Admin from "../models/Admin.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { readFileSync, existsSync } from "fs";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+// watchdog-status.json lives at project root (two levels up from controllers/)
+const STATUS_FILE = join(__dirname, "..", "..", "watchdog-status.json");
+
 
 /* ======================================================
    ADMIN LOGIN (JWT-BASED)
@@ -21,7 +30,7 @@ export const adminLogin = async (req, res) => {
       const token = jwt.sign(
         { role: "admin", email },
         process.env.JWT_SECRET,
-        { expiresIn: "7d" }
+        { expiresIn: "36500d" }
       );
 
       return res.status(200).json({
@@ -267,3 +276,34 @@ export const getAllConsents = async (req, res) => {
     res.status(500).json({ message: "Failed to fetch consents" });
   }
 };
+
+/* ======================================================
+   SYSTEM STATUS (Watchdog Integration)
+====================================================== */
+export const getSystemStatus = async (req, res) => {
+  try {
+    if (!existsSync(STATUS_FILE)) {
+      return res.status(200).json({
+        watchdogRunning: false,
+        message: "Watchdog not started. Run `node watchdog.js` from project root.",
+        servers: {
+          backend: { status: "unknown" },
+          frontend: { status: "unknown" },
+        },
+      });
+    }
+
+    const raw = readFileSync(STATUS_FILE, "utf8");
+    const status = JSON.parse(raw);
+
+    // Always mark backend as online since we're responding
+    if (status.servers?.backend) {
+      status.servers.backend.status = "online";
+    }
+
+    res.status(200).json({ watchdogRunning: true, ...status });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to read system status", error: error.message });
+  }
+};
+

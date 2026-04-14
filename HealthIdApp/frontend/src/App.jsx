@@ -9,7 +9,7 @@ import { Toaster } from 'sonner';
 import Navbar from './components/Navbar';
 import SmoothScroll from './components/SmoothScroll';
 import Preloader from './components/Preloader';
-import CustomCursor from './components/CustomCursor';
+
 import ScrollProgress from './components/ScrollProgress';
 
 // Public Pages
@@ -35,6 +35,7 @@ import MyPatients from './pages/hospital/MyPatients';
 // Admin Pages
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import NotFound from './pages/NotFound';
 
 // Protected Routes wrappers
 const ProtectedPatientRoute = ({ children }) => {
@@ -76,7 +77,7 @@ function AppInner() {
   return (
     <>
       <Preloader onComplete={() => setPreloaderDone(true)} />
-      <CustomCursor />
+
       <ScrollProgress />
       <div className="grain-overlay" aria-hidden="true" />
       
@@ -110,7 +111,7 @@ function AppInner() {
               <Route path="/admin/dashboard" element={<ProtectedAdminRoute><AdminDashboard /></ProtectedAdminRoute>} />
 
               {/* Fallback */}
-              <Route path="*" element={<Navigate to="/" />} />
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </AnimatePresence>
         </MainLayout>

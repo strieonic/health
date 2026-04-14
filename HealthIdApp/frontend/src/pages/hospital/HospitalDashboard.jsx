@@ -6,9 +6,31 @@ import { FaSearch, FaUsers, FaCloudUploadAlt, FaFileContract } from 'react-icons
 
 const HospitalDashboard = () => {
   const { user } = useAuth();
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 800);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="dashboard-container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem' }}>
+        <h1 className="heading-gradient" style={{ marginBottom: '2rem' }}>Syncing Systems...</h1>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem' }}>
+          {[1,2,3,4].map(i => <div key={i} className="skeleton bento-tile" style={{ height: '180px' }} />)}
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+    <motion.div 
+      initial={{ opacity: 0, y: 10 }} 
+      animate={{ opacity: 1, y: 0 }}
+      className="dashboard-container"
+      style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem' }}
+    >
       <div className="glass-panel" style={{ marginBottom: '2rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <h1 className="heading-gradient">Hospital Dashboard</h1>

@@ -6,21 +6,31 @@ let mongoServer;
 const connectDB = async () => {
   try {
     // Try real MongoDB first
-    if (process.env.MONGO_URI && process.env.MONGO_URI !== "mongodb://localhost:27017/healthid") {
-      await mongoose.connect(process.env.MONGO_URI);
-      console.log("✅ Connected to MongoDB (remote)");
-      return;
+    if (process.env.MONGO_URI && 
+        process.env.MONGO_URI !== "mongodb://localhost:27017/healthid" && 
+        process.env.MONGO_URI !== "") {
+      try {
+        console.log("⏳ Attempting to connect to Cloud Database...");
+        await mongoose.connect(process.env.MONGO_URI, {
+          serverSelectionTimeoutMS: 5000, // wait up to 5s
+        });
+        console.log("✅ Connected to MongoDB (remote)");
+        return;
+      } catch (remoteErr) {
+        console.error("⚠️ Remote MongoDB connection failed:", remoteErr.message);
+        console.log("🔄 Falling back to local/in-memory options...");
+      }
     }
 
     // Try local MongoDB
     try {
       await mongoose.connect("mongodb://localhost:27017/healthid", {
-        serverSelectionTimeoutMS: 3000,
+        serverSelectionTimeoutMS: 2000,
       });
       console.log("✅ Connected to local MongoDB");
       return;
     } catch (localErr) {
-      console.log("⚠️  Local MongoDB not running, starting in-memory server...");
+      console.log("⚠️ Local MongoDB not running, starting in-memory server...");
     }
 
     // Fallback to in-memory MongoDB
@@ -28,10 +38,11 @@ const connectDB = async () => {
     const uri = mongoServer.getUri();
     await mongoose.connect(uri);
     console.log("✅ Connected to in-memory MongoDB (dev mode)");
-    console.log("⚠️  Data will be lost on server restart!");
+    console.log("⚠️ Data will be lost on server restart!");
   } catch (error) {
-    console.error("❌ MongoDB connection failed:", error.message);
-    throw error;
+    console.error("❌ Critical MongoDB error:", error.message);
+    // Don't throw here if we want the server to keep trying or start anyway
+    // throw error; 
   }
 };
 

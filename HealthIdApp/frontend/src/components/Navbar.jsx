@@ -2,7 +2,16 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 import './Navbar.css';
+
+const languages = [
+  { code: 'en', label: 'English', flag: '🇬🇧' },
+  { code: 'hi', label: 'हिन्दी', flag: '🇮🇳' },
+  { code: 'mr', label: 'मराठी', flag: '🇮🇳' },
+  { code: 'bn', label: 'বাংলা', flag: '🇮🇳' },
+  { code: 'ta', label: 'தமிழ்', flag: '🇮🇳' }
+];
 
 const Navbar = () => {
   const { user, role, logout } = useAuth();
@@ -11,6 +20,8 @@ const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [theme, setTheme] = useState(document.documentElement.getAttribute('data-theme') || 'dark');
+  const { t, i18n } = useTranslation();
+  const [langOpen, setLangOpen] = useState(false);
   const isAdmin = localStorage.getItem('adminAuth') === 'true';
   const isOnAdminPage = location.pathname.startsWith('/admin');
   const isLanding = location.pathname === '/';
@@ -91,11 +102,11 @@ const Navbar = () => {
               </>
             ) : !user ? (
               <>
-                <Link to="/patient/login" className="nav-link">Login</Link>
-                <Link to="/hospital/login" className="nav-link">Hospital Portal</Link>
-                <Link to="/admin/login" className="nav-link">Admin Portal</Link>
+                <Link to="/patient/login" className="nav-link">{t('nav.login')}</Link>
+                <Link to="/hospital/login" className="nav-link">{t('nav.hospitalPortal')}</Link>
+                <Link to="/admin/login" className="nav-link">{t('nav.adminPortal')}</Link>
                 <Link to="/patient/register" className="nav-cta">
-                  Get Started
+                  {t('nav.getStarted')}
                   <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ marginLeft: '4px' }}>
                     <path d="M1 7h12M8 2l5 5-5 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
@@ -105,27 +116,65 @@ const Navbar = () => {
               <>
                 {role === 'patient' && (
                   <>
-                    <Link to="/patient/dashboard" className="nav-link">Dashboard</Link>
-                    <Link to="/patient/records" className="nav-link">Records</Link>
-                    <Link to="/patient/consents" className="nav-link">Consents</Link>
-                    <Link to="/patient/healthcard" className="nav-link">Health Card</Link>
+                    <Link to="/patient/dashboard" className="nav-link">{t('nav.dashboard')}</Link>
+                    <Link to="/patient/records" className="nav-link">{t('nav.records')}</Link>
+                    <Link to="/patient/consents" className="nav-link">{t('nav.consents')}</Link>
+                    <Link to="/patient/healthcard" className="nav-link">{t('nav.healthCard')}</Link>
                   </>
                 )}
                 {role === 'hospital' && (
                   <>
-                    <Link to="/hospital/dashboard" className="nav-link">Dashboard</Link>
-                    <Link to="/hospital/search" className="nav-link">Search</Link>
-                    <Link to="/hospital/consent" className="nav-link">Consent</Link>
-                    <Link to="/hospital/upload" className="nav-link">Upload</Link>
-                    <Link to="/hospital/patients" className="nav-link">Directory</Link>
+                    <Link to="/hospital/dashboard" className="nav-link">{t('nav.dashboard')}</Link>
+                    <Link to="/hospital/search" className="nav-link">{t('nav.search')}</Link>
+                    <Link to="/hospital/consent" className="nav-link">{t('nav.consents')}</Link>
+                    <Link to="/hospital/upload" className="nav-link">{t('nav.upload')}</Link>
+                    <Link to="/hospital/patients" className="nav-link">{t('nav.directory')}</Link>
                   </>
                 )}
                 <div className="nav-user-controls">
                   <span className="user-greeting">{user.name || user.hospitalName || 'User'}</span>
-                  <button onClick={handleLogout} className="ghost-btn btn-sm">Logout</button>
+                  <button onClick={handleLogout} className="ghost-btn btn-sm">{t('nav.logout')}</button>
                 </div>
               </>
             )}
+
+            {/* Language Switcher */}
+            <div className="lang-switcher">
+              <button 
+                className="lang-btn" 
+                onClick={() => setLangOpen(!langOpen)}
+                aria-label="Select Language"
+              >
+                <span className="lang-icon">🌐</span>
+                <span className="lang-current">{languages.find(l => l.code === i18n.language.split('-')[0])?.label || 'EN'}</span>
+              </button>
+              
+              <AnimatePresence>
+                {langOpen && (
+                  <motion.div 
+                    className="lang-dropdown"
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  >
+                    {languages.map((lang) => (
+                      <button
+                        key={lang.code}
+                        className={`lang-option ${i18n.language.startsWith(lang.code) ? 'active' : ''}`}
+                        onClick={() => {
+                          i18n.changeLanguage(lang.code);
+                          setLangOpen(false);
+                        }}
+                      >
+                        <span className="lang-flag">{lang.flag}</span>
+                        {lang.label}
+                      </button>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
             <button onClick={toggleTheme} className="theme-toggle" aria-label="Toggle theme">
               {theme === 'dark' ? (
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -249,7 +298,26 @@ const Navbar = () => {
                   </>
                 )}
                 
-                <motion.div custom={6} initial="hidden" animate="visible" variants={navLinkVariants} className="mobile-theme-toggle">
+                <motion.div custom={6} initial="hidden" animate="visible" variants={navLinkVariants} className="mobile-lang-selector">
+                  <p className="mobile-section-label">Select Language</p>
+                  <div className="mobile-lang-grid">
+                    {languages.map((lang) => (
+                      <button
+                        key={lang.code}
+                        className={`mobile-lang-item ${i18n.language.startsWith(lang.code) ? 'active' : ''}`}
+                        onClick={() => {
+                          i18n.changeLanguage(lang.code);
+                          closeMenu();
+                        }}
+                      >
+                        <span className="lang-flag">{lang.flag}</span>
+                        {lang.label}
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+
+                <motion.div custom={7} initial="hidden" animate="visible" variants={navLinkVariants} className="mobile-theme-toggle">
                   <button onClick={toggleTheme} className="ghost-btn">
                     {theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
                   </button>

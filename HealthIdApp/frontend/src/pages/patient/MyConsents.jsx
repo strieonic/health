@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import api from '../../api/axios';
-import { FaCheckCircle, FaClock, FaTimesCircle } from 'react-icons/fa';
+import { FaCheckCircle, FaClock, FaTimesCircle, FaArrowLeft, FaShieldAlt } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
+import EmptyState from '../../components/EmptyState';
 
 const MyConsents = () => {
   const [consents, setConsents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchConsents = async () => {
@@ -31,14 +34,23 @@ const MyConsents = () => {
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-      <h2 className="heading-gradient" style={{ marginBottom: '2rem' }}>Consent Requests</h2>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
+        <button onClick={() => navigate(-1)} style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', borderRadius: '12px', padding: '12px', color: 'var(--text-primary)', cursor: 'pointer', display: 'flex' }}>
+          <FaArrowLeft />
+        </button>
+        <h2 className="heading-gradient" style={{ margin: 0 }}>Consent Requests</h2>
+      </div>
       
       {loading ? (
-        <div style={{ textAlign: 'center', color: 'var(--secondary-color)' }}>Loading consents...</div>
-      ) : consents.length === 0 ? (
-        <div className="glass-panel text-center" style={{ color: 'var(--text-secondary)', padding: '3rem' }}>
-          No consent requests found.
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          {[1,2,3].map(i => <div key={i} className="skeleton" style={{ height: '80px', borderRadius: '15px' }}></div>)}
         </div>
+      ) : consents.length === 0 ? (
+        <EmptyState 
+          icon={FaShieldAlt}
+          title="No pending requests"
+          description="Hospitals will request your permission here before accessing your medical records. You are in full control of your data."
+        />
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
           {consents.map((consent, index) => (

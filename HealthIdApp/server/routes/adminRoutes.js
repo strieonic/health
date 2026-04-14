@@ -11,6 +11,7 @@ import {
   getAllPatients,
   getAllRecords,
   getAllConsents,
+  getSystemStatus,
 } from "../controllers/adminController.js";
 
 const router = express.Router();
@@ -47,5 +48,8 @@ router.get("/records", getAllRecords);
 
 // View all consents
 router.get("/consents", getAllConsents);
+
+// System / Watchdog status (reads watchdog-status.json)
+router.get("/system-status", getSystemStatus);
 
 export default router;

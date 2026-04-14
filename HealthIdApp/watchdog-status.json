@@ -1,0 +1,52 @@
+{
+  "updatedAt": "2026-04-14T16:33:36.564Z",
+  "watchdog": {
+    "startedAt": "2026-04-14T15:33:33.415Z",
+    "nextCheck": "2026-04-14T17:03:36.564Z",
+    "fixes": [],
+    "totalRestarts": 0,
+    "status": "running"
+  },
+  "servers": {
+    "backend": {
+      "pid": 12988,
+      "status": "online",
+      "restarts": 0,
+      "lastError": "⚠️ Remote MongoDB connection failed: Could not connect to any servers in your MongoDB Atlas cluster. One common reason is that you're trying to access the database from an IP that isn't whitelisted. M",
+      "lastCheck": "2026-04-14T16:33:36.549Z",
+      "startedAt": "2026-04-14T15:33:33.431Z",
+      "errorLog": [
+        {
+          "at": "2026-04-14T15:33:43.733Z",
+          "msg": "⚠️ Remote MongoDB connection failed: Could not connect to any servers in your MongoDB Atlas cluster. One common reason is that you're trying to access the database from an IP that isn't whitelisted. M"
+        }
+      ]
+    },
+    "frontend": {
+      "pid": 20048,
+      "status": "online",
+      "restarts": 0,
+      "lastError": "\u001b[2m10:03:17 pm\u001b[22m \u001b[33m\u001b[1m[vite]\u001b[22m\u001b[39m \u001b[33m\u001b[2m(client)\u001b[22m\u001b[39m \u001b[2m[console.warn] \u001b[22mPlease ensure that the container has a non-static position, like 'relative', 'fixed', or 'absolute' t",
+      "lastCheck": "2026-04-14T16:33:36.556Z",
+      "startedAt": "2026-04-14T15:33:36.461Z",
+      "errorLog": [
+        {
+          "at": "2026-04-14T15:40:30.514Z",
+          "msg": "\u001b[2m9:10:30 pm\u001b[22m \u001b[33m\u001b[1m[vite]\u001b[22m\u001b[39m \u001b[33m\u001b[2m(client)\u001b[22m\u001b[39m \u001b[2m[console.warn] \u001b[22mPlease ensure that the container has a non-static position, like 'relative', 'fixed', or 'absolute' to"
+        },
+        {
+          "at": "2026-04-14T15:47:07.773Z",
+          "msg": "\u001b[2m9:17:07 pm\u001b[22m \u001b[31m\u001b[1m[vite]\u001b[22m\u001b[39m \u001b[31mInternal server error: Transform failed with 2 errors:\n\n\u001b[31m[PARSE_ERROR] Error:\u001b[0m Expected corresponding closing tag for JSX fragment.\n     \u001b[38;"
+        },
+        {
+          "at": "2026-04-14T15:47:07.785Z",
+          "msg": "\u001b[2m9:17:07 pm\u001b[22m \u001b[31m\u001b[1m[vite]\u001b[22m\u001b[39m \u001b[31m\u001b[2m(client)\u001b[22m\u001b[39m \u001b[2m[console.error] \u001b[22m[vite] Failed to reload /src/components/Navbar.jsx. This could be due to syntax errors or importing n"
+        },
+        {
+          "at": "2026-04-14T16:33:17.936Z",
+          "msg": "\u001b[2m10:03:17 pm\u001b[22m \u001b[33m\u001b[1m[vite]\u001b[22m\u001b[39m \u001b[33m\u001b[2m(client)\u001b[22m\u001b[39m \u001b[2m[console.warn] \u001b[22mPlease ensure that the container has a non-static position, like 'relative', 'fixed', or 'absolute' t"
+        }
+      ]
+    }
+  }
+}

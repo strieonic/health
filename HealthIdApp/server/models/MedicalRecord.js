@@ -10,13 +10,24 @@ const medicalRecordSchema = new mongoose.Schema(
 
     hospital: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Hospital",
+      ref: "Hospital", // Optional: if uploaded by doctor
+    },
+
+    ownerType: {
+      type: String,
+      enum: ["patient", "hospital"],
       required: true,
+      default: "hospital",
+    },
+
+    category: {
+      type: String,
+      enum: ["Prescription", "Lab Report", "Scan", "Vaccination", "Other"],
+      default: "Other",
     },
 
     recordType: {
-      type: String,
-      default: "General",
+      type: String, // Detail like "Blood Test", "X-Ray"
     },
 
     fileUrl: {

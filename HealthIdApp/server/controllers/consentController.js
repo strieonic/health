@@ -1,5 +1,8 @@
+import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import Patient from "../models/Patient.js";
 import Consent from "../models/Consent.js";
+import { sendOTPEmail } from "../services/emailService.js";
 
 /* ======================================================
    REQUEST CONSENT (SEND OTP)
@@ -7,31 +10,50 @@ import Consent from "../models/Consent.js";
 export const requestConsent = async (req, res) => {
   try {
     const { healthId } = req.body;
+    
+    // Normalize healthId (e.g., from MH-2-026--3210 to MH-2026-3210)
+    const clean = healthId.replace(/[-\s]/g, ""); 
+    let normalizedId = healthId.trim();
+    if (clean.length === 10 && clean.startsWith("MH")) {
+      normalizedId = `MH-${clean.substring(2, 6)}-${clean.substring(6)}`;
+    }
 
-    const patient = await Patient.findOne({ healthId });
+    const patient = await Patient.findOne({ 
+      $or: [
+        { healthId: healthId.trim() },
+        { healthId: normalizedId }
+      ]
+    });
 
     if (!patient) {
       return res.status(404).json({ message: "Patient not found" });
     }
 
-    // Generate 6-digit OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    // Generate 6-digit secure OTP
+    const otp = crypto.randomInt(100000, 999999).toString();
+
+    // Hash OTP for secure storage
+    const salt = await bcrypt.genSalt(10);
+    const hashedOtp = await bcrypt.hash(otp, salt);
 
     const consent = await Consent.create({
       patientId: patient._id,
       hospitalId: req.hospital._id,
-      otp,
+      hashedOtp,
       status: "pending",
-      expiresAt: Date.now() + 5 * 60 * 1000,
+      otpExpiresAt: Date.now() + 5 * 60 * 1000, // OTP valid for 5 mins
     });
 
-    // In dev mode, log the OTP. In production, send via SMS.
-    console.log(`\n🔐 Consent OTP for patient ${healthId}: ${otp}\n`);
+    // Send via email to patient
+    await sendOTPEmail(
+      patient.email,
+      otp,
+      `${patient.name} (Request from ${req.hospital.hospitalName})`,
+    );
 
     res.status(200).json({
-      message: "OTP sent successfully",
+      message: "Consent OTP sent to patient email",
       consentId: consent._id,
-      devOTP: otp,
     });
   } catch (error) {
     console.error("Consent request error:", error);
@@ -52,19 +74,27 @@ export const verifyConsentOTP = async (req, res) => {
       return res.status(404).json({ message: "Consent not found" });
     }
 
-    if (consent.expiresAt < Date.now()) {
+    if (consent.otpExpiresAt < Date.now()) {
       return res.status(400).json({ message: "OTP expired" });
     }
 
-    if (consent.otp !== otp) {
+    // Verify hashed OTP
+    const isMatch = await bcrypt.compare(otp, consent.hashedOtp);
+    if (!isMatch) {
       return res.status(400).json({ message: "Invalid OTP" });
     }
 
+    // Calculate access expiry (Strict 30-minute window for hospital access)
+    const accessUntil = new Date();
+    accessUntil.setMinutes(accessUntil.getMinutes() + 30);
+
     consent.status = "approved";
+    consent.expiresAt = accessUntil;
     await consent.save();
 
     res.status(200).json({
       message: "Access granted",
+      accessUntil,
       access: true,
     });
   } catch (error) {

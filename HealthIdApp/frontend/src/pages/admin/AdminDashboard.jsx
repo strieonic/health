@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../../api/axios';
+import EmptyState from '../../components/EmptyState';
 import './AdminDashboard.css';
 
 /* ── Icon Components ── */
@@ -81,6 +82,21 @@ const Icons = {
       <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
     </svg>
   ),
+  Activity: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+    </svg>
+  ),
+  Server: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="2" width="20" height="8" rx="2" ry="2"/><rect x="2" y="14" width="20" height="8" rx="2" ry="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/>
+    </svg>
+  ),
+  Refresh: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+    </svg>
+  ),
 };
 
 /* ── Helper: Format date ── */
@@ -139,6 +155,8 @@ const AdminDashboard = () => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [selectedHospital, setSelectedHospital] = useState(null);
   const [confirmAction, setConfirmAction] = useState(null);
+  const [systemStatus, setSystemStatus] = useState(null);
+  const [showStatusWidget, setShowStatusWidget] = useState(false);
 
   /* ── Fetch dashboard stats ── */
   const fetchStats = useCallback(async () => {
@@ -180,6 +198,16 @@ const AdminDashboard = () => {
     }
   }, []);
 
+  /* ── Fetch system status ── */
+  const fetchSystemStatus = useCallback(async () => {
+    try {
+      const res = await api.get('/admin/system-status');
+      setSystemStatus(res.data);
+    } catch (err) {
+      console.error('System status fetch failed:', err);
+    }
+  }, []);
+
   /* ── Fetch consents ── */
   const fetchConsents = useCallback(async () => {
     try {
@@ -194,11 +222,22 @@ const AdminDashboard = () => {
   useEffect(() => {
     const loadAll = async () => {
       setLoading(true);
-      await Promise.all([fetchStats(), fetchHospitals(), fetchPatients(), fetchRecords(), fetchConsents()]);
+      await Promise.all([
+        fetchStats(), 
+        fetchHospitals(), 
+        fetchPatients(), 
+        fetchRecords(), 
+        fetchConsents(),
+        fetchSystemStatus()
+      ]);
       setLoading(false);
     };
     loadAll();
-  }, [fetchStats, fetchHospitals, fetchPatients, fetchRecords, fetchConsents]);
+    
+    // Auto-refresh system status every 2 minutes
+    const interval = setInterval(fetchSystemStatus, 120000);
+    return () => clearInterval(interval);
+  }, [fetchStats, fetchHospitals, fetchPatients, fetchRecords, fetchConsents, fetchSystemStatus]);
 
   /* ── Hospital actions ── */
   const handleHospitalAction = async (id, action) => {
@@ -304,8 +343,20 @@ const AdminDashboard = () => {
   const renderOverview = () => (
     <motion.div key="overview" variants={pageVariants} initial="hidden" animate="visible" exit="exit">
       <div className="admin-page-header">
-        <h2>Dashboard Overview</h2>
-        <p>Real-time system metrics and activity</p>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+          <div>
+            <h2>Dashboard Overview</h2>
+            <p>Real-time system metrics and activity</p>
+          </div>
+          <button 
+            className={`system-status-trigger ${systemStatus?.watchdogRunning ? 'status-ok' : 'status-warn'}`}
+            onClick={() => setShowStatusWidget(!showStatusWidget)}
+          >
+            <Icons.Activity />
+            <span>System Status</span>
+            <div className={`status-indicator ${systemStatus?.watchdogRunning ? 'pulse' : ''}`} />
+          </button>
+        </div>
       </div>
 
       {/* Stat Cards */}
@@ -402,29 +453,126 @@ const AdminDashboard = () => {
         </motion.div>
 
         <motion.div className="system-health" variants={staggerItem} initial="hidden" animate="visible">
-          <h3>System Status</h3>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-md)' }}>
+            <h3>System Status</h3>
+            <button className="refresh-btn-mini" onClick={fetchSystemStatus} title="Refresh Status">
+              <Icons.Refresh />
+            </button>
+          </div>
+          
           <div className="health-item">
-            <span className="health-label">Approved Hospitals</span>
-            <span className="health-value">{stats?.approvedHospitals ?? 0}</span>
+            <span className="health-label">Backend Server</span>
+            <span className={`health-value ${systemStatus?.servers?.backend?.status === 'online' ? 'success' : 'danger'}`}>
+              {systemStatus?.servers?.backend?.status?.toUpperCase() || 'UNKNOWN'}
+            </span>
           </div>
           <div className="health-item">
-            <span className="health-label">Pending Hospitals</span>
-            <span className={`health-value ${(stats?.pendingHospitals ?? 0) > 0 ? 'warning' : ''}`}>{stats?.pendingHospitals ?? 0}</span>
+            <span className="health-label">Frontend (Vite)</span>
+            <span className={`health-value ${systemStatus?.servers?.frontend?.status === 'online' ? 'success' : 'danger'}`}>
+                {systemStatus?.servers?.frontend?.status?.toUpperCase() || 'OFFLINE'}
+            </span>
           </div>
           <div className="health-item">
-            <span className="health-label">Rejected Hospitals</span>
-            <span className={`health-value ${(stats?.rejectedHospitals ?? 0) > 0 ? 'danger' : ''}`}>{stats?.rejectedHospitals ?? 0}</span>
+            <span className="health-label">Watchdog Monitor</span>
+            <span className={`health-value ${systemStatus?.watchdogRunning ? 'success' : 'warning'}`}>
+              {systemStatus?.watchdogRunning ? 'ACTIVE' : 'INACTIVE'}
+            </span>
           </div>
           <div className="health-item">
-            <span className="health-label">Pending Consents</span>
-            <span className={`health-value ${(stats?.pendingConsents ?? 0) > 0 ? 'warning' : ''}`}>{stats?.pendingConsents ?? 0}</span>
+            <span className="health-label">Auto-Heal Fixes</span>
+            <span className="health-value">{systemStatus?.watchdog?.fixes?.length || 0} Applied</span>
           </div>
-          <div className="health-item">
-            <span className="health-label">Database Status</span>
-            <span className="health-value">Online</span>
+          <div className="health-item" style={{ borderTop: '1px solid var(--border-subtle)', marginTop: '8px', paddingTop: '8px' }}>
+            <span className="health-label">Next Auto-Check</span>
+            <span className="health-value" style={{ fontSize: '10px' }}>
+              {systemStatus?.watchdog?.nextCheck ? new Date(systemStatus.watchdog.nextCheck).toLocaleTimeString() : '--:--'}
+            </span>
           </div>
         </motion.div>
       </div>
+
+      {/* ── Compact System Status Window ── */}
+      <AnimatePresence>
+        {showStatusWidget && (
+          <>
+            <div className="status-widget-overlay" onClick={() => setShowStatusWidget(false)} />
+            <motion.div 
+              className="compact-status-window"
+              initial={{ opacity: 0, scale: 0.9, y: 10, x: 0 }}
+              animate={{ opacity: 1, scale: 1, y: 0, x: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 10 }}
+            >
+              <div className="status-window-header">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Icons.Shield />
+                  <span>System Health Monitor</span>
+                </div>
+                <button className="close-mini" onClick={() => setShowStatusWidget(false)}>✕</button>
+              </div>
+
+              <div className="status-window-content">
+                <div className="status-row">
+                  <div className="status-row-info">
+                    <Icons.Server />
+                    <div>
+                      <p>Backend API</p>
+                      <span>Port 8000</span>
+                    </div>
+                  </div>
+                  <span className={`status-pill ${systemStatus?.servers?.backend?.status || 'offline'}`}>
+                    {systemStatus?.servers?.backend?.status || 'offline'}
+                  </span>
+                </div>
+
+                <div className="status-row">
+                  <div className="status-row-info">
+                    <Icons.Server />
+                    <div>
+                      <p>Frontend (Vite)</p>
+                      <span>Port 5173</span>
+                    </div>
+                  </div>
+                  <span className={`status-pill ${systemStatus?.servers?.frontend?.status || 'offline'}`}>
+                    {systemStatus?.servers?.frontend?.status || 'offline'}
+                  </span>
+                </div>
+
+                <div className="status-row">
+                  <div className="status-row-info">
+                    <Icons.Activity />
+                    <div>
+                      <p>Watchdog Engine</p>
+                      <span>30m interval</span>
+                    </div>
+                  </div>
+                  <span className={`status-pill ${systemStatus?.watchdogRunning ? 'online' : 'offline'}`}>
+                    {systemStatus?.watchdogRunning ? 'running' : 'stopped'}
+                  </span>
+                </div>
+
+                {systemStatus?.watchdog?.fixes?.length > 0 && (
+                  <div className="status-logs">
+                    <p>Recent Auto-Fixes</p>
+                    <div className="log-entries">
+                      {systemStatus.watchdog.fixes.slice(-3).reverse().map((fix, idx) => (
+                        <div key={idx} className="log-entry">
+                          <span>{new Date(fix.at).toLocaleTimeString()}:</span> {fix.msg}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="status-window-footer">
+                <button className="refresh-status-btn" onClick={fetchSystemStatus}>
+                  <Icons.Refresh /> Refresh Monitoring
+                </button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 
@@ -465,11 +613,10 @@ const AdminDashboard = () => {
         </div>
 
         {filteredHospitals.length === 0 ? (
-          <div className="admin-empty">
-            <div className="empty-icon">🏥</div>
-            <h4>No hospitals found</h4>
-            <p>Try adjusting your search or filter criteria</p>
-          </div>
+          <EmptyState 
+            title="No hospitals found"
+            description={searchQuery ? "Try adjusting your search or filter criteria to find the hospital you're looking for." : "No hospitals have registered on the platform yet."}
+          />
         ) : (
           <>
             <table className="admin-table">
@@ -551,11 +698,10 @@ const AdminDashboard = () => {
         </div>
 
         {filteredPatients.length === 0 ? (
-          <div className="admin-empty">
-            <div className="empty-icon">👤</div>
-            <h4>No patients found</h4>
-            <p>{searchQuery ? 'Try a different search term' : 'No patients registered yet'}</p>
-          </div>
+          <EmptyState 
+            title="No patients found"
+            description={searchQuery ? "We couldn't find any patients matching your search query." : "The patient registry is currently empty."}
+          />
         ) : (
           <>
             <table className="admin-table">
@@ -622,11 +768,10 @@ const AdminDashboard = () => {
         </div>
 
         {filteredRecords.length === 0 ? (
-          <div className="admin-empty">
-            <div className="empty-icon">📋</div>
-            <h4>No records found</h4>
-            <p>{searchQuery ? 'Try a different search term' : 'No medical records uploaded yet'}</p>
-          </div>
+          <EmptyState 
+            title="No records found"
+            description={searchQuery ? "No medical records match your current search criteria." : "No medical records have been uploaded to the system yet."}
+          />
         ) : (
           <>
             <table className="admin-table">
@@ -702,11 +847,10 @@ const AdminDashboard = () => {
         </div>
 
         {filteredConsents.length === 0 ? (
-          <div className="admin-empty">
-            <div className="empty-icon">🛡️</div>
-            <h4>No consents found</h4>
-            <p>{searchQuery ? 'Try a different search term' : 'No consent requests yet'}</p>
-          </div>
+          <EmptyState 
+            title="No consents found"
+            description={searchQuery ? "We couldn't find any consent requests matching your search." : "There are no active or pending consent requests at this time."}
+          />
         ) : (
           <>
             <table className="admin-table">
@@ -765,14 +909,14 @@ const AdminDashboard = () => {
   if (loading) {
     return (
       <div className="admin-portal">
-        <div className="admin-content" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '1rem' }}>
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-            style={{ width: 40, height: 40, borderRadius: '50%', border: '3px solid var(--border-subtle)', borderTopColor: 'var(--accent-primary)' }}
-          />
-          <p style={{ color: 'var(--text-tertiary)', fontSize: 'var(--text-sm)' }}>Loading dashboard...</p>
-        </div>
+        <aside className="admin-sidebar skeleton" />
+        <main className="admin-main" style={{ padding: '2rem' }}>
+          <div className="skeleton" style={{ height: '40px', width: '300px', marginBottom: '2rem' }} />
+          <div className="stats-grid" style={{ marginBottom: '2rem' }}>
+            {[1,2,3,4].map(i => <div key={i} className="skeleton" style={{ height: '160px', borderRadius: '24px' }} />)}
+          </div>
+          <div className="skeleton" style={{ height: '400px', borderRadius: '24px' }} />
+        </main>
       </div>
     );
   }
@@ -893,7 +1037,7 @@ const AdminDashboard = () => {
                   <div className="detail-item full-width">
                     <label>Licence Document</label>
                     <p>
-                      <a href={`http://localhost:8000${selectedHospital.licencePdf}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-primary)' }}>
+                      <a href={`${(import.meta.env.VITE_API_URL || 'http://localhost:8000/api').replace('/api', '')}${selectedHospital.licencePdf}`} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-primary)' }}>
                         View Document ↗
                       </a>
                     </p>

@@ -6,6 +6,7 @@ import TextReveal from '../components/TextReveal';
 import AnimatedCounter from '../components/AnimatedCounter';
 import GlowCard from '../components/GlowCard';
 import api from '../api/axios';
+import { useTranslation } from 'react-i18next';
 import './Landing.css';
 
 /* ─── Animation Helpers ─── */
@@ -116,6 +117,7 @@ const FAQItem = ({ question, answer, index }) => {
    LANDING PAGE
 ═══════════════════════════════════════════ */
 const Landing = () => {
+  const { t } = useTranslation();
   const [stats, setStats] = useState({
     patients: 12000,
     hospitals: 50,
@@ -169,29 +171,29 @@ const Landing = () => {
             <motion.div variants={fadeUp} custom={0}>
               <div className="hero-badge">
                 <span className="hero-badge-dot" />
-                India's Digital Health Infrastructure
+                {t('hero.badge')}
               </div>
             </motion.div>
 
             <motion.h1 className="hero-headline" variants={fadeUp} custom={0.1}>
-              The <span className="accent">future</span> of<br />
-              health records
+              {t('hero.headline').split('future')[0]}
+              <span className="accent">{t('hero.headline').includes('future') ? 'future' : t('hero.headline')}</span>
+              {t('hero.headline').split('future')[1]}
             </motion.h1>
 
             <motion.p className="hero-description" variants={fadeUp} custom={0.2}>
-              One secure identity. Every hospital. Complete control.
-              Your medical history, unified and protected by consent.
+              {t('hero.description')}
             </motion.p>
 
             <motion.div className="hero-actions" variants={fadeUp} custom={0.3}>
               <Link to="/patient/register" className="primary-btn" style={{ padding: '16px 36px', fontSize: '1.05rem' }}>
-                Create Your Health ID
+                {t('hero.cta')}
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                   <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </Link>
               <Link to="/hospital/login" className="secondary-btn" style={{ padding: '16px 32px' }}>
-                For Hospitals
+                {t('hero.forHospitals')}
               </Link>
             </motion.div>
           </motion.div>
@@ -217,16 +219,22 @@ const Landing = () => {
                     <div className="card-subtitle">Active • Verified</div>
                   </div>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                  <div style={{ height: '8px', width: '80%', background: 'rgba(255,255,255,0.04)', borderRadius: '4px' }} />
-                  <div style={{ height: '8px', width: '60%', background: 'rgba(255,255,255,0.04)', borderRadius: '4px' }} />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '12px' }}>
+                  <div style={{ fontSize: '0.7rem', color: 'var(--text-tertiary)' }}>ID VERIFICATION</div>
+                  <div style={{ height: '32px', width: '100%', background: 'rgba(255,255,255,0.04)', borderRadius: '8px', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', padding: '0 10px', fontSize: '0.8rem', color: 'var(--accent-primary)', fontWeight: 'bold', fontFamily: 'monospace' }}>
+                    MH-9922-4821-39
+                  </div>
                 </div>
                 <div className="card-bar">
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.65rem', color: 'var(--text-tertiary)', marginBottom: '4px' }}>
+                    <span>Profile Strength</span>
+                    <span>100%</span>
+                  </div>
                   <motion.div
                     className="card-bar-fill"
                     style={{ background: 'var(--accent-primary)' }}
                     initial={{ width: '0%' }}
-                    animate={{ width: '85%' }}
+                    animate={{ width: '100%' }}
                     transition={{ delay: 1.2, duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
                   />
                 </div>
@@ -252,15 +260,19 @@ const Landing = () => {
                   </div>
                 </div>
                 <div style={{
-                  padding: '8px 12px',
-                  background: 'rgba(0,212,170,0.08)',
-                  borderRadius: '8px',
-                  fontSize: '0.75rem',
-                  color: 'var(--accent-secondary)',
-                  fontWeight: 600,
-                  marginTop: '8px'
+                  padding: '10px 14px',
+                  background: 'rgba(0,212,170,0.06)',
+                  border: '1px solid rgba(0,212,170,0.2)',
+                  borderRadius: '10px',
+                  fontSize: '0.8rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  marginTop: '12px'
                 }}>
-                  ✓ OTP Verified — Access for 24hrs
+                  <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent-secondary)' }} />
+                  <span style={{ color: 'var(--accent-secondary)', fontWeight: 600 }}>OTP Verified</span>
+                  <span style={{ color: 'var(--text-tertiary)', marginLeft: 'auto' }}>Expires in 24h</span>
                 </div>
               </motion.div>
 
@@ -352,9 +364,9 @@ const Landing = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div className="section-label">Why HealthID</div>
+          <div className="section-label">{t('features.label')}</div>
           <h2 className="section-title">
-            Built for how healthcare<br />actually works in India
+            {t('features.title')}
           </h2>
         </motion.div>
 
@@ -367,10 +379,9 @@ const Landing = () => {
                 <path d="M8 7h8M8 11h5M8 15h7" stroke="var(--accent-primary)" strokeWidth="1.3" strokeLinecap="round"/>
               </svg>
             </div>
-            <h3 className="feature-title">Unified Medical Timeline</h3>
+            <h3 className="feature-title">{t('features.unified.title')}</h3>
             <p className="feature-description">
-              Every prescription, lab report, diagnosis, and doctor visit — from every hospital — in a single, chronological timeline. 
-              No more carrying bulky files or explaining your history from scratch at every new clinic.
+              {t('features.unified.desc')}
             </p>
           </GlowCard>
 
@@ -382,9 +393,9 @@ const Landing = () => {
                 <path d="M9 12l2 2 4-4" stroke="var(--accent-secondary)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
             </div>
-            <h3 className="feature-title">OTP-Based Consent</h3>
+            <h3 className="feature-title">{t('features.consent.title')}</h3>
             <p className="feature-description">
-              You hold the keys. No hospital can access your records without your explicit, time-limited OTP permission.
+              {t('features.consent.desc')}
             </p>
           </GlowCard>
 

@@ -1,0 +1,79 @@
+[2026-04-14T15:33:02.818Z] [INFO] 🚀 HealthID Watchdog starting...
+[2026-04-14T15:33:02.824Z] [INFO] [32m▶ Starting Backend (API)...[0m
+[2026-04-14T15:33:05.845Z] [INFO] [36m▶ Starting Frontend (Vite)...[0m
+[2026-04-14T15:33:05.886Z] [INFO] 🕐 Next scheduled check at 9:33:05 pm
+[2026-04-14T15:33:05.946Z] [WARN] ⚠️  Frontend (Vite) exited (code=1). Attempting recovery...
+[2026-04-14T15:33:05.948Z] [ERROR] [frontend] Code error detected (manual fix needed): D:\health\arogyam\HealthIdApp\frontend\node_modules\.bin\vite:2
+basedir=$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")
+          ^^^^^^^
+
+SyntaxError: missing ) after argument list
+[90m    at wra
+[2026-04-14T15:33:05.949Z] [INFO] 🔄 Restarting Frontend (Vite) in 4s... (attempt 1)
+[2026-04-14T15:33:09.955Z] [INFO] [36m▶ Starting Frontend (Vite)...[0m
+[2026-04-14T15:33:10.105Z] [WARN] ⚠️  Frontend (Vite) exited (code=1). Attempting recovery...
+[2026-04-14T15:33:10.106Z] [ERROR] [frontend] Code error detected (manual fix needed): D:\health\arogyam\HealthIdApp\frontend\node_modules\.bin\vite:2
+basedir=$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")
+          ^^^^^^^
+
+SyntaxError: missing ) after argument list
+[90m    at wra
+[2026-04-14T15:33:10.106Z] [INFO] 🔄 Restarting Frontend (Vite) in 4s... (attempt 2)
+[2026-04-14T15:33:13.491Z] [INFO] ✅ Backend (API) is online
+[2026-04-14T15:33:14.117Z] [INFO] [36m▶ Starting Frontend (Vite)...[0m
+[2026-04-14T15:33:14.229Z] [WARN] ⚠️  Frontend (Vite) exited (code=1). Attempting recovery...
+[2026-04-14T15:33:14.230Z] [ERROR] [frontend] Code error detected (manual fix needed): D:\health\arogyam\HealthIdApp\frontend\node_modules\.bin\vite:2
+basedir=$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")
+          ^^^^^^^
+
+SyntaxError: missing ) after argument list
+[90m    at wra
+[2026-04-14T15:33:14.231Z] [INFO] 🔄 Restarting Frontend (Vite) in 4s... (attempt 3)
+[2026-04-14T15:33:18.236Z] [INFO] [36m▶ Starting Frontend (Vite)...[0m
+[2026-04-14T15:33:18.362Z] [WARN] ⚠️  Frontend (Vite) exited (code=1). Attempting recovery...
+[2026-04-14T15:33:18.363Z] [ERROR] [frontend] Code error detected (manual fix needed): D:\health\arogyam\HealthIdApp\frontend\node_modules\.bin\vite:2
+basedir=$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")
+          ^^^^^^^
+
+SyntaxError: missing ) after argument list
+[90m    at wra
+[2026-04-14T15:33:18.364Z] [INFO] 🔄 Restarting Frontend (Vite) in 4s... (attempt 4)
+[2026-04-14T15:33:22.374Z] [INFO] [36m▶ Starting Frontend (Vite)...[0m
+[2026-04-14T15:33:22.500Z] [WARN] ⚠️  Frontend (Vite) exited (code=1). Attempting recovery...
+[2026-04-14T15:33:22.501Z] [ERROR] [frontend] Code error detected (manual fix needed): D:\health\arogyam\HealthIdApp\frontend\node_modules\.bin\vite:2
+basedir=$(dirname "$(echo "$0" | sed -e 's,\\,/,g')")
+          ^^^^^^^
+
+SyntaxError: missing ) after argument list
+[90m    at wra
+[2026-04-14T15:33:22.501Z] [INFO] 🔄 Restarting Frontend (Vite) in 4s... (attempt 5)
+[2026-04-14T15:33:26.507Z] [INFO] [36m▶ Starting Frontend (Vite)...[0m
+[2026-04-14T15:33:26.648Z] [WARN] ⚠️  Frontend (Vite) exited (code=1). Attempting recovery...
+[2026-04-14T15:33:26.649Z] [ERROR] ❌ Frontend (Vite) max restart attempts reached. Manual intervention needed.
+[2026-04-14T15:33:33.417Z] [INFO] 🚀 HealthID Watchdog starting...
+[2026-04-14T15:33:33.418Z] [INFO] [32m▶ Starting Backend (API)...[0m
+[2026-04-14T15:33:36.447Z] [INFO] [36m▶ Starting Frontend (Vite)...[0m
+[2026-04-14T15:33:36.499Z] [INFO] 🕐 Next scheduled check at 9:33:36 pm
+[2026-04-14T15:33:38.343Z] [INFO] ✅ Frontend (Vite) is online
+[2026-04-14T15:33:43.798Z] [INFO] ✅ Backend (API) is online
+[2026-04-14T15:34:36.472Z] [INFO] 🔍 Initial stability check...
+[2026-04-14T15:40:26.519Z] [INFO] 🚀 HealthID Watchdog starting...
+[2026-04-14T15:40:26.522Z] [INFO] [32m▶ Starting Backend (API)...[0m
+[2026-04-14T15:40:29.553Z] [INFO] [36m▶ Starting Frontend (Vite)...[0m
+[2026-04-14T15:40:29.720Z] [INFO] 🕐 Next scheduled check at 9:40:29 pm
+[2026-04-14T15:40:32.346Z] [INFO] ✅ Frontend (Vite) is online
+[2026-04-14T15:40:36.293Z] [INFO] ✅ Backend (API) is online
+[2026-04-14T15:40:56.615Z] [WARN] ⚠️  Frontend (Vite) exited (code=3221225786). Attempting recovery...
+[2026-04-14T15:40:56.617Z] [INFO] 🔄 Restarting Frontend (Vite) in 4s... (attempt 1)
+[2026-04-14T16:03:36.508Z] [INFO] 🔍 Running scheduled health checks...
+[2026-04-14T16:03:36.538Z] [INFO] 🕐 Next scheduled check at 10:03:36 pm
+[2026-04-14T16:33:14.268Z] [INFO] 🚀 HealthID Watchdog starting...
+[2026-04-14T16:33:14.272Z] [INFO] [32m▶ Starting Backend (API)...[0m
+[2026-04-14T16:33:17.298Z] [INFO] [36m▶ Starting Frontend (Vite)...[0m
+[2026-04-14T16:33:17.338Z] [INFO] 🕐 Next scheduled check at 10:33:17 pm
+[2026-04-14T16:33:19.236Z] [INFO] ✅ Frontend (Vite) is online
+[2026-04-14T16:33:24.965Z] [INFO] ✅ Backend (API) is online
+[2026-04-14T16:33:32.387Z] [WARN] ⚠️  Frontend (Vite) exited (code=3221225786). Attempting recovery...
+[2026-04-14T16:33:32.389Z] [INFO] 🔄 Restarting Frontend (Vite) in 4s... (attempt 1)
+[2026-04-14T16:33:36.548Z] [INFO] 🔍 Running scheduled health checks...
+[2026-04-14T16:33:36.565Z] [INFO] 🕐 Next scheduled check at 10:33:36 pm

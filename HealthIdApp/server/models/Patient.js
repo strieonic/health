@@ -13,6 +13,13 @@ const patientSchema = new mongoose.Schema(
       unique: true,
     },
 
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+    },
+
     aadhaar: {
       type: String,
     },

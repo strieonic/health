@@ -1,0 +1,12 @@
+{
+  "name": "healthid-app",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "HealthID Platform — Root Runner",
+  "scripts": {
+    "watchdog": "node watchdog.js",
+    "dev:server": "cd server && npm run dev",
+    "dev:client": "cd frontend && npm run dev",
+    "dev": "node watchdog.js"
+  }
+}
