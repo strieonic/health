@@ -40,10 +40,8 @@ export const sendOTPEmail = async (email, otp, name) => {
     });
 
     if (error) {
-      console.error(`❌ Resend API blocked the email. Reason: ${error.message}`);
-      console.log("------------------------------------------");
-      console.log(`📧 TERMINAL FALLBACK (DEV MODE) | OTP: ${otp}`);
-      console.log("------------------------------------------");
+      console.error(`❌ Resend API blocked the email loop. Reason: ${error.message}`);
+      console.log(`💡 Tip: If you are using a free Resend account, you can only send to your own verified email.`);
       return false;
     }
 
@@ -51,10 +49,7 @@ export const sendOTPEmail = async (email, otp, name) => {
     return true;
     
   } catch (err) {
-    console.error(`❌ Critical Email error... falling back to terminal logging!`);
-    console.log("------------------------------------------");
-    console.log(`📧 TERMINAL FALLBACK (DEV MODE) | OTP: ${otp}`);
-    console.log("------------------------------------------");
+    console.error(`❌ Critical Email error: ${err.message}`);
     return false;
   }
 };

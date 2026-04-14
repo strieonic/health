@@ -83,10 +83,13 @@ export const sendPatientOTP = async (req, res) => {
     }, { runValidators: false });
 
     // Send via professional email service
-    await sendOTPEmail(patient.email, otp, patient.name);
+    const emailSent = await sendOTPEmail(patient.email, otp, patient.name);
 
     res.status(200).json({
-      message: "OTP sent to your registered email address",
+      message: emailSent 
+        ? "OTP sent to your registered email address" 
+        : "OTP email failed. Using fallback display.",
+      devOTP: (!emailSent || process.env.NODE_ENV !== "production") ? otp : null
     });
   } catch (error) {
     console.error("OTP error:", error);
